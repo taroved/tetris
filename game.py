@@ -20,6 +20,7 @@ def main():
   
   keys_text = 'Enter your move ("a" - move left, "d" - move right, "w" - rotate counter clockwise, "s" rotate clockwise):'
 
+  redraw = True
   while True:
     # create figure if not exists
     if not panel.figure:
@@ -28,14 +29,44 @@ def main():
         break
 
     #draw panel
-    clear()
-    draw(panel.get_matrix_snapshot())
+    if redraw:
+      clear()
+      draw(panel.get_matrix_snapshot())
 
+    #import pdb; pdb.set_trace()
     print keys_text
     key = sys.stdin.read(1)
-    if key == "a":
-      if not panel.shift_figure(0,-1):
-        print keys_text 
+    if key == "a":  # move left
+      if not panel.shift_figure(-1,0):
+        redraw = False 
+      else:
+        if not panel.shift_figure_down():
+          panel.figure_end()
+        redraw = True
+    elif key == "d":  # move right
+      if not panel.shift_figure(1,0):
+        redraw = False
+      else:
+        if not panel.shift_figure_down():
+          panel.figure_end()
+        redraw = True
+    elif key == "w":  # rotate counter clockwise
+      if not panel.rotate_figure(False):
+        redraw = False
+      else:
+        if not panel.shift_figure_down():
+          panel.figure_end()
+        redraw = True
+    elif key == "s":  # rotate clockwise
+      if not panel.rotate_figure(True):
+        redraw = False
+      else:
+        if not panel.shift_figure_down():
+          panel.figure_end()
+        redraw = True
+    else:
+      redraw = False
+      
 
 if __name__ == "__main__":
   main()

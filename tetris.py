@@ -23,8 +23,6 @@ class Panel:
     self.matrix = [[0 for col in range(self.X_SIZE)] for row in range(self.Y_SIZE)]
  
   def new_figure(self):
-    #import pdb
-    #pdb.set_trace()
     self.figure = Figure()
     d = self.figure.get_dimensions()
 
@@ -51,15 +49,18 @@ class Panel:
 
   def validate_figure(self, figure, x, y):
     for i in figure.get_coordinates():
-      if 0 <= i[0]+x < self.X_SIZE and i[1]+y < self.Y_SIZE:
+      if 0 <= i[0]+x < self.X_SIZE and i[1]+y < self.Y_SIZE and self.matrix[i[1]+y][i[0]+x]==0:
         pass
       else:
         return False
     return True
 
   def rotate_figure(self, clockwise):
+    #import pdb
+    #pdb.set_trace()
     f = copy.deepcopy(self.figure)
-    if self.validate_figure(f.rotate(clockwise), self.figure_x, self.figure_y):
+    f.rotate(clockwise)
+    if self.validate_figure(f, self.figure_x, self.figure_y):
       self.figure.rotate(clockwise)
       return True
     else:
@@ -67,7 +68,7 @@ class Panel:
 
   def shift_figure(self, shift_x, shift_y):
     f = copy.deepcopy(self.figure)
-    if self.validate_figure(f.rotate(clockwise), self.figure_x+shift_x, self.figure_y+shift_y):
+    if self.validate_figure(f, self.figure_x+shift_x, self.figure_y+shift_y):
       self.figure_x += shift_x
       self.figure_y += shift_y 
       return True
@@ -78,8 +79,12 @@ class Panel:
     return self.shift_figure(0, 1)
 
   def figure_end(self):
-    for i in figure.get_coordinates():
-      self.matrix[i[1]+self.figure_y][i[0]+self.figure_x] = 1
+    for i in self.figure.get_coordinates():
+      x = i[0]+self.figure_x
+      y = i[1]+self.figure_y
+      if 0 <= x < self.X_SIZE and 0 <= y < self.Y_SIZE:
+        self.matrix[y][x] = 1
+    self.figure = None
 
   def get_matrix_snapshot(self):
     m = copy.deepcopy(self.matrix)
@@ -87,7 +92,6 @@ class Panel:
       for i in self.figure.get_coordinates():
         x = i[0]+self.figure_x
         y = i[1]+self.figure_y
-       
         if 0 <= x < self.X_SIZE and 0 <= y < self.Y_SIZE:
           m[y][x] = 1
     return m
@@ -148,7 +152,7 @@ class Figure:
     self.fig_state = random.randint(0, len(self.possible_figures[self.fig_num])-1)
 
   def is_rotatable(self):
-    return self.fig_num == self.SWUARE_NUM
+    return self.fig_num != self.SWUARE_NUM
 
   def rotate(self, clockwise):
     if self.is_rotatable():
@@ -181,6 +185,8 @@ class Figure:
   def get_coordinates(self):
     return self.possible_figures[self.fig_num][self.fig_state]     
   
+  def __str__(self):
+    return "<Figure (fig_num: %s fig_state: %s)>" % (self.fig_num, self.fig_state) 
 
     
 
