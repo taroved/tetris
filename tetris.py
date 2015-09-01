@@ -1,4 +1,5 @@
 import random
+import copy
 
 
 """
@@ -22,17 +23,24 @@ class Panel:
     self.matrix = [[0 for col in range(self.X_SIZE)] for row in range(self.Y_SIZE)]
  
   def new_figure(self):
+    #import pdb
+    #pdb.set_trace()
     self.figure = Figure()
-    d = self.figure.get_dimentions()
+    d = self.figure.get_dimensions()
 
     x_interval = [-d["min_x"], self.X_SIZE-1 - d["max_x"]]
-    shift = 1
-    xpos = x_interval[0]
-    # search empty space for new figure
-    while not self.validate_figure(self.figure, xpos, 1):
-      xpos += shift
-      if xpos > x_interval[1]:
-        break
+    # try random x position for start
+    xpos = random.randint(x_interval[0], x_interval[1])
+    if (self.validate_figure(self.figure, xpos, 1)):
+      pass
+    else: # move from left to right border
+      shift = 1
+      xpos = x_interval[0]
+      # search empty space for new figure
+      while not self.validate_figure(self.figure, xpos, 1):
+        xpos += shift
+        if xpos > x_interval[1]:
+          break
     
     if self.validate_figure(self.figure, xpos, 1):
       self.figure_x = xpos
@@ -43,15 +51,46 @@ class Panel:
 
   def validate_figure(self, figure, x, y):
     for i in figure.get_coordinates():
-      if 0 >= i[0]+x < self.X_SIZE and 0 >= i[1]+y < self.Y_SIZE:
+      if 0 <= i[0]+x < self.X_SIZE and i[1]+y < self.Y_SIZE:
         pass
       else:
         return False
     return True
 
-  def key_press(self, key):
-    if  
+  def rotate_figure(self, clockwise):
+    f = copy.deepcopy(self.figure)
+    if self.validate_figure(f.rotate(clockwise), self.figure_x, self.figure_y):
+      self.figure.rotate(clockwise)
+      return True
+    else:
+      return False
 
+  def shift_figure(self, shift_x, shift_y):
+    f = copy.deepcopy(self.figure)
+    if self.validate_figure(f.rotate(clockwise), self.figure_x+shift_x, self.figure_y+shift_y):
+      self.figure_x += shift_x
+      self.figure_y += shift_y 
+      return True
+    else:
+      return False
+
+  def shift_figure_down(self):
+    return self.shift_figure(0, 1)
+
+  def figure_end(self):
+    for i in figure.get_coordinates():
+      self.matrix[i[1]+self.figure_y][i[0]+self.figure_x] = 1
+
+  def get_matrix_snapshot(self):
+    m = copy.deepcopy(self.matrix)
+    if self.figure:
+      for i in self.figure.get_coordinates():
+        x = i[0]+self.figure_x
+        y = i[1]+self.figure_y
+       
+        if 0 <= x < self.X_SIZE and 0 <= y < self.Y_SIZE:
+          m[y][x] = 1
+    return m
 
 class Figure:
   
@@ -119,7 +158,7 @@ class Figure:
       else:
         self.fig_state = len(positions)-1 if self.fig_state == 0 else self.fig_state-1
  
-  def get_dementions(self):
+  def get_dimensions(self):
     min_x = 0
     min_y = 0
     max_x = 0
@@ -127,7 +166,7 @@ class Figure:
 
     position = self.possible_figures[self.fig_num][self.fig_state]
 
-    for i in xrange(len(position)):
+    for i in position:
        if min_x > i[0]:
          min_x = i[0]
        if min_y > i[1]:
