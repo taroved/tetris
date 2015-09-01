@@ -29,20 +29,20 @@ class Panel:
     x_interval = [-d["min_x"], self.X_SIZE-1 - d["max_x"]]
     # try random x position for start
     xpos = random.randint(x_interval[0], x_interval[1])
-    if (self.validate_figure(self.figure, xpos, 1)):
+    if (self.validate_figure(self.figure, xpos, 0)):
       pass
     else: # move from left to right border
       shift = 1
       xpos = x_interval[0]
       # search empty space for new figure
-      while not self.validate_figure(self.figure, xpos, 1):
+      while not self.validate_figure(self.figure, xpos, 0):
         xpos += shift
         if xpos > x_interval[1]:
           break
     
-    if self.validate_figure(self.figure, xpos, 1):
+    if self.validate_figure(self.figure, xpos, 0):
       self.figure_x = xpos
-      self.figure_y = 1
+      self.figure_y = 0
       return True
     else:
       return False
@@ -74,6 +74,16 @@ class Panel:
       return True
     else:
       return False
+
+  def shift_figure_x(self, shift):
+    """Shift with fix. If figure can't move in any direction we return True to move it down"""
+    if not self.shift_figure(shift, 0):
+      if not self.validate_figure(self.figure, self.figure_x-1, self.figure_y) and not self.validate_figure(self.figure, self.figure_x+1, self.figure_y):
+        return True
+      else:
+        return False
+    else:
+      return True
 
   def shift_figure_down(self):
     return self.shift_figure(0, 1)

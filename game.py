@@ -15,6 +15,7 @@ def draw(matrix):
     print '*'
   print '**********************'
   
+
 def main():
   panel = tetris.Panel()
   
@@ -33,18 +34,19 @@ def main():
       clear()
       draw(panel.get_matrix_snapshot())
 
-    #import pdb; pdb.set_trace()
     print keys_text
-    key = sys.stdin.read(1)
+    key = sys.stdin.readline()[0]
+    #import pdb; pdb.set_trace()
+
     if key == "a":  # move left
-      if not panel.shift_figure(-1,0):
+      if not panel.shift_figure_x(-1):
         redraw = False 
       else:
         if not panel.shift_figure_down():
           panel.figure_end()
         redraw = True
     elif key == "d":  # move right
-      if not panel.shift_figure(1,0):
+      if not panel.shift_figure_x(1):
         redraw = False
       else:
         if not panel.shift_figure_down():
