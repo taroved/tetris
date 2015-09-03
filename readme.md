@@ -1,4 +1,5 @@
 #To run application type:
 
-$ python game.py
-
+```
+python game.py
+```
