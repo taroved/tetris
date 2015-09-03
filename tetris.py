@@ -56,8 +56,6 @@ class Panel:
     return True
 
   def rotate_figure(self, clockwise):
-    #import pdb
-    #pdb.set_trace()
     f = copy.deepcopy(self.figure)
     f.rotate(clockwise)
     if self.validate_figure(f, self.figure_x, self.figure_y):

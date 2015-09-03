@@ -36,7 +36,6 @@ def main():
 
     print keys_text
     key = sys.stdin.readline()[0]
-    #import pdb; pdb.set_trace()
 
     if key == "a":  # move left
       if not panel.shift_figure_x(-1):
